@@ -1,8 +1,8 @@
-# State-of-the-Art Shitcode Principles
+# Luau State-of-the-Art Shitcode Principles
 
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
-This a list of state-of-the-art shitcode principles your project should follow to call it a proper shitcode.
+This is a list of state-of-the-art shitcode principles your Roblox/Luau project should follow to call it a proper shitcode.
 
 _Read this in other languages:_
 [_简体中文_](README.zh-CN.md),
@@ -28,14 +28,14 @@ Fewer keystrokes, more time for you.
 
 _Good 👍🏻_
 
-```javascript
-let a = 42;
+```luau
+local a = 42
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let age = 42;
+```luau
+local age = 42
 ```
 
 ### 💩 Mix variable/functions naming style
@@ -44,16 +44,16 @@ Celebrate the difference.
 
 _Good 👍🏻_
 
-```javascript
-let wWidth = 640;
-let w_height = 480;
+```luau
+local wWidth = 640
+local w_height = 480
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let windowWidth = 640;
-let windowHeight = 480;
+```luau
+local windowWidth = 640
+local windowHeight = 480
 ```
 
 ### 💩 Never write comments
@@ -62,18 +62,18 @@ No one is going to read your code anyway.
 
 _Good 👍🏻_
 
-```javascript
-const cdr = 700;
+```luau
+local cdr = 700
 ```
 
 _Bad 👎🏻_
 
 More often comments should contain some 'why' and not some 'what'. If the 'what' is not clear in the code, the code is probably too messy.
 
-```javascript
-// The number of 700ms has been calculated empirically based on UX A/B test results.
-// @see: <link to experiment or to related JIRA task or to something that explains number 700 in details>
-const callbackDebounceRate = 700;
+```luau
+-- The number of 700ms has been calculated empirically based on UX A/B test results.
+-- @see: <link to experiment or to related Jira task or to something that explains number 700 in details>
+local callbackDebounceRate = 700
 ```
 
 ### 💩 Always write comments in your native language
@@ -82,16 +82,16 @@ If you violated the "No comments" principle then at least try to write comments 
 
 _Good 👍🏻_
 
-```javascript
-// Закриваємо модальне віконечко при виникненні помилки.
-toggleModal(false);
+```luau
+-- Закриваємо модальне віконечко при виникненні помилки.
+toggleModal(false)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-// Hide modal window on error.
-toggleModal(false);
+```luau
+-- Hide modal window on error.
+toggleModal(false)
 ```
 
 ### 💩 Try to mix formatting style as much as possible
@@ -100,39 +100,37 @@ Celebrate the difference.
 
 _Good 👍🏻_
 
-```javascript
-let i = ['tomato', 'onion', 'mushrooms'];
-let d = [ "ketchup", "mayonnaise" ];
+```luau
+local i = {'tomato', 'onion', 'mushrooms'}
+local d = { "ketchup", "mayonnaise" }
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let ingredients = ['tomato', 'onion', 'mushrooms'];
-let dressings = ['ketchup', 'mayonnaise'];
+```luau
+local ingredients = {"tomato", "onion", "mushrooms"}
+local dressings = {"ketchup", "mayonnaise"}
 ```
 
 ### 💩 Put as much code as possible into one line
 
 _Good 👍🏻_
 
-```javascript
-document.location.search.replace(/(^\?)/,'').split('&').reduce(function(o,n){n=n.split('=');o[n[0]]=n[1];return o},{})
+```luau
+game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("ScreenGui"):FindFirstChild("Frame"):FindFirstChild("TextLabel").Text = "Hello"
 ```
 
 _Bad 👎🏻_
 
-```javascript
-document.location.search
-  .replace(/(^\?)/, '')
-  .split('&')
-  .reduce((searchParams, keyValuePair) => {
-    keyValuePair = keyValuePair.split('=');
-    searchParams[keyValuePair[0]] = keyValuePair[1];
-    return searchParams;
-  },
-  {}
-)
+```luau
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local playerGui = localPlayer:WaitForChild("PlayerGui")
+local screenGui = playerGui:WaitForChild("ScreenGui")
+local frame = screenGui:WaitForChild("Frame")
+local textLabel = frame:WaitForChild("TextLabel")
+
+textLabel.Text = "Hello"
 ```
 
 ### 💩 Fail silently
@@ -141,24 +139,21 @@ Whenever you catch an error it is not necessary for anyone to know about it. No 
 
 _Good 👍🏻_
 
-```javascript
-try {
-  // Something unpredictable.
-} catch (error) {
-  // tss... 🤫
-}
+```luau
+pcall(function()
+  -- Something unpredictable.
+end)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-try {
-  // Something unpredictable.
-} catch (error) {
-  setErrorMessage(error.message);
-  // and/or
-  logError(error);
-}
+```luau
+local success, err = pcall(function()
+  -- Something unpredictable.
+end)
+if not success then
+  warn("Error occurred:", err)
+end
 ```
 
 ### 💩 Use global variables extensively
@@ -167,26 +162,26 @@ Globalization principle.
 
 _Good 👍🏻_
 
-```javascript
-let x = 5;
+```luau
+_G.x = 5
 
-function square() {
-  x = x ** 2;
-}
+function square()
+  _G.x = _G.x ^ 2
+end
 
-square(); // Now x is 25.
+square() -- Now _G.x is 25.
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let x = 5;
+```luau
+local x = 5
 
-function square(num) {
-  return num ** 2;
-}
+local function square(num: number): number
+  return num ^ 2
+end
 
-x = square(x); // Now x is 25.
+x = square(x) -- Now x is 25.
 ```
 
 ### 💩 Create variables that you're not going to use.
@@ -195,49 +190,51 @@ Just in case.
 
 _Good 👍🏻_
 
-```javascript
-function sum(a, b, c) {
-  const timeout = 1300;
-  const result = a + b;
-  return a + b;
-}
+```luau
+local function sum(a, b, c)
+  local timeout = 1300
+  local result = a + b
+  return a + b
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function sum(a, b) {
-  return a + b;
-}
+```luau
+local function sum(a, b)
+  return a + b
+end
 ```
 
 ### 💩 Don't specify types and/or don't do type checks if language allows you to do so.
 
 _Good 👍🏻_
 
-```javascript
-function sum(a, b) {
-  return a + b;
-}
+```luau
+--!nocheck
 
-// Having untyped fun here.
-const guessWhat = sum([], {}); // -> "[object Object]"
-const guessWhatAgain = sum({}, []); // -> 0
+local function sum(a, b)
+  return a + b
+end
+
+-- Having untyped fun here.
+local guessWhat = sum("hello", 123)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function sum(a: number, b: number): ?number {
-  // Covering the case when we don't do transpilation and/or Flow type checks in JS.
-  if (typeof a !== 'number' && typeof b !== 'number') {
-    return undefined;
-  }
-  return a + b;
-}
+```luau
+--!strict
 
-// This one should fail during the transpilation/compilation.
-const guessWhat = sum([], {}); // -> undefined
+local function sum(a: number, b: number): number?
+  if type(a) ~= "number" or type(b) ~= "number" then
+    return nil
+  end
+  return a + b
+end
+
+-- This one should fail during Luau type checking.
+local guessWhat = sum("hello", 123)
 ```
 
 ### 💩 You need to have an unreachable piece of code
@@ -246,27 +243,26 @@ This is your "Plan B".
 
 _Good 👍🏻_
 
-```javascript
-function square(num) {
-  if (typeof num === 'undefined') {
-    return undefined;
-  }
-  else {
-    return num ** 2;
-  }
-  return null; // This is my "Plan B".
-}
+```luau
+local function square(num)
+  if num == nil then
+    return nil
+  else
+    return num ^ 2
+  end
+  return false -- This is my "Plan B".
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function square(num) {
-  if (typeof num === 'undefined') {
-    return undefined;
-  }
-  return num ** 2;
-}
+```luau
+local function square(num)
+  if num == nil then
+    return nil
+  end
+  return num ^ 2
+end
 ```
 
 ### 💩 Triangle principle
@@ -275,41 +271,39 @@ Be like a bird - nest, nest, nest.
 
 _Good 👍🏻_
 
-```javascript
-function someFunction() {
-  if (condition1) {
-    if (condition2) {
-      asyncFunction(params, (result) => {
-        if (result) {
-          for (;;) {
-            if (condition3) {
-            }
-          }
-        }
-      })
-    }
-  }
-}
+```luau
+local function onDamage(player, amount)
+  if player then
+    if player.Character then
+      if player.Character:FindFirstChild("Humanoid") then
+        task.spawn(function()
+          if amount > 0 then
+            for i = 1, 10 do
+              if player.Character.Humanoid.Health > 0 then
+                player.Character.Humanoid:TakeDamage(amount)
+              end
+            end
+          end
+        end)
+      end
+    end
+  end
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-async function someFunction() {
-  if (!condition1 || !condition2) {
-    return;
-  }
-  
-  const result = await asyncFunction(params);
-  if (!result) {
-    return;
-  }
-  
-  for (;;) {
-    if (condition3) {
-    }
-  }
-}
+```luau
+local function onDamage(player: Player, amount: number)
+  if not player or not player.Character then return end
+  local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+  if not humanoid or amount <= 0 then return end
+
+  for i = 1, 10 do
+    if humanoid.Health <= 0 then break end
+    humanoid:TakeDamage(amount)
+  end
+end
 ```
 
 ### 💩 Mess with indentations
@@ -318,32 +312,32 @@ Avoid indentations since they make complex code take up more space in the editor
 
 _Good 👍🏻_
 
-```javascript
-const fruits = ['apple',
-  'orange', 'grape', 'pineapple'];
-  const toppings = ['syrup', 'cream', 
+```luau
+local fruits = {'apple',
+  'orange', 'grape', 'pineapple'}
+  local toppings = {'syrup', 'cream', 
                     'jam', 
-                    'chocolate'];
-const desserts = [];
-fruits.forEach(fruit => {
-toppings.forEach(topping => {
-    desserts.push([
-fruit,topping]);
-    });})
+                    'chocolate'}
+local desserts = {}
+for _, fruit in fruits do
+for _, topping in toppings do
+    table.insert(desserts, {
+fruit,topping})
+    end end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-const fruits = ['apple', 'orange', 'grape', 'pineapple'];
-const toppings = ['syrup', 'cream', 'jam', 'chocolate'];
-const desserts = [];
+```luau
+local fruits = {"apple", "orange", "grape", "pineapple"}
+local toppings = {"syrup", "cream", "jam", "chocolate"}
+local desserts = {}
 
-fruits.forEach(fruit => {
-  toppings.forEach(topping => {
-    desserts.push([fruit, topping]); 
-  });
-})
+for _, fruit in fruits do
+  for _, topping in toppings do
+    table.insert(desserts, {fruit, topping})
+  end
+end
 ```
 
 ### 💩 Do not lock your dependencies
@@ -355,7 +349,7 @@ _Good 👍🏻_
 ```
 $ ls -la
 
-package.json
+wally.toml
 ```
 
 _Bad 👎🏻_
@@ -363,8 +357,8 @@ _Bad 👎🏻_
 ```
 $ ls -la
 
-package.json
-package-lock.json
+wally.toml
+wally.lock
 ```
 
 ### 💩 Always name your boolean value a `flag`
@@ -373,15 +367,15 @@ Leave the space for your colleagues to think what the boolean value means.
 
 _Good 👍🏻_
 
-```javascript
-let flag = true;
+```luau
+local flag = true
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let isDone = false;
-let isEmpty = false;
+```luau
+local isDone = false
+local isEmpty = false
 ```
 
 ### 💩 Long-read functions are better than short ones.
@@ -390,15 +384,15 @@ Don't divide a program logic into readable pieces. What if your IDE's search bre
 
 - 10000 lines of code in one file is OK.
 - 1000 lines of a function body is OK.
-- Dealing with many services (3rd party and internal, also, there are some helpers, database hand-written ORM and jQuery slider) in one `service.js`? It's OK.
+- Dealing with many services (DataStores, Player Messaging, Combat, UI logic, Leaderstats, hand-written Inventory ORM and TweenService animations) in one `MainScript.server.lua`? It's OK.
 
 ### 💩 Avoid covering your code with tests
 
-This is a duplicate and unnecessary amount of work.
+This is a duplicate and unnecessary amount of work. (Why use TestEZ or Jest-Lua?)
 
 ### 💩 As hard as you can try to avoid code linters
 
-Write code as you want, especially if there is more than one developer in a team. This is a "freedom" principle.
+Write code as you want, especially if there is more than one developer in a team. Avoid tools like Selene, Luau-LSP, or StyLua. This is a "freedom" principle.
 
 ### 💩 Start your project without a README file.
 

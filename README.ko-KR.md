@@ -1,8 +1,8 @@
-# State-of-the-Art Shitcode의 규칙
+# Luau State-of-the-Art Shitcode의 규칙
 
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
-이 목록은 여러분의 프로젝트가 제대로 shitcode가 되기 위해 따라야 하는 규칙들입니다.
+이 목록은 여러분의 Roblox/Luau 프로젝트가 제대로 shitcode가 되기 위해 따라야 하는 규칙들입니다.
 
 _다른 언어로 읽기:_
 [_English_](README.md),
@@ -10,7 +10,7 @@ _다른 언어로 읽기:_
 
 ## 뱃지 만들기
 
-만일 여러분의 레포지토리가 shitcode의 규칙을 따른다면, 여러분은 다음과 같은 "state-of-the-art shitcode" 뱃지를 사용할 수 있습니다:
+만일 여러분의 레포지토리가 state-of-the-art shitcode의 규칙을 따른다면, 여러분은 다음과 같은 "state-of-the-art shitcode" 뱃지를 사용할 수 있습니다:
 
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
@@ -28,14 +28,14 @@ _다른 언어로 읽기:_
 
 _Good 👍🏻_
 
-```javascript
-let a = 42;
+```luau
+local a = 42
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let age = 42;
+```luau
+local age = 42
 ```
 
 ### 💩 변수와 함수의 이름 스타일을 섞기
@@ -44,16 +44,16 @@ let age = 42;
 
 _Good 👍🏻_
 
-```javascript
-let wWidth = 640;
-let w_height = 480;
+```luau
+local wWidth = 640
+local w_height = 480
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let windowWidth = 640;
-let windowHeight = 480;
+```luau
+local windowWidth = 640
+local windowHeight = 480
 ```
 
 ### 💩 주석을 전혀 작성하지 않기
@@ -62,18 +62,18 @@ let windowHeight = 480;
 
 _Good 👍🏻_
 
-```javascript
-const cdr = 700;
+```luau
+local cdr = 700
 ```
 
 _Bad 👎🏻_
 
-자주 작성되는 주석은 '왜'가 아니라 '무엇'인지를 포함해야 합니다. 만일 코드에서 '무엇'이 명확하지 않으면, 코드가 너무 흐트러질 수 있기 때문입니다.
+자주 작성되는 주석은 '무엇'이 아니라 '왜'인지를 포함해야 합니다. 만일 코드에서 '무엇'이 명확하지 않으면, 코드가 너무 흐트러질 수 있기 때문입니다.
 
-```javascript
-// 700ms라는 수는 UX A/B 테스트 결과에 기초하여 경험적으로 계산된 것입니다.
-// @보세요: <실험 또는 JIRA 작업에 관련된 것 또는 숫자 700에 대해 상세히 설명하는 것에 대한 링크>
-const callbackDebounceRate = 700;
+```luau
+-- 700ms라는 수는 UX A/B 테스트 결과에 기초하여 경험적으로 계산된 것입니다.
+-- @보세요: <실험 또는 Jira 작업에 관련된 것 또는 숫자 700에 대해 상세히 설명하는 것에 대한 링크>
+local callbackDebounceRate = 700
 ```
 
 ### 💩 항상 자신의 모국어로 주석을 작성하기
@@ -82,16 +82,16 @@ const callbackDebounceRate = 700;
 
 _Good 👍🏻_
 
-```javascript
-// Закриваємо модальне віконечко при виникненні помилки.
-toggleModal(false);
+```luau
+-- Закриваємо модальне віконечко при виникненні помилки.
+toggleModal(false)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-// Hide modal window on error.
-toggleModal(false);
+```luau
+-- Hide modal window on error.
+toggleModal(false)
 ```
 
 ### 💩 가능한 많이 서식 스타일을 혼합하기
@@ -100,39 +100,37 @@ toggleModal(false);
 
 _Good 👍🏻_
 
-```javascript
-let i = ['tomato', 'onion', 'mushrooms'];
-let d = [ "ketchup", "mayonnaise" ];
+```luau
+local i = {'tomato', 'onion', 'mushrooms'}
+local d = { "ketchup", "mayonnaise" }
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let ingredients = ['tomato', 'onion', 'mushrooms'];
-let dressings = ['ketchup', 'mayonnaise'];
+```luau
+local ingredients = {"tomato", "onion", "mushrooms"}
+local dressings = {"ketchup", "mayonnaise"}
 ```
 
 ### 💩 가능한 많이 한 줄에 코드 입력하기
 
 _Good 👍🏻_
 
-```javascript
-document.location.search.replace(/(^\?)/,'').split('&').reduce(function(o,n){n=n.split('=');o[n[0]]=n[1];return o},{})
+```luau
+game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("ScreenGui"):FindFirstChild("Frame"):FindFirstChild("TextLabel").Text = "Hello"
 ```
 
 _Bad 👎🏻_
 
-```javascript
-document.location.search
-  .replace(/(^\?)/, '')
-  .split('&')
-  .reduce((searchParams, keyValuePair) => {
-    keyValuePair = keyValuePair.split('=');
-    searchParams[keyValuePair[0]] = keyValuePair[1];
-    return searchParams;
-  },
-  {}
-)
+```luau
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local playerGui = localPlayer:WaitForChild("PlayerGui")
+local screenGui = playerGui:WaitForChild("ScreenGui")
+local frame = screenGui:WaitForChild("Frame")
+local textLabel = frame:WaitForChild("TextLabel")
+
+textLabel.Text = "Hello"
 ```
 
 ### 💩 조용히 실패하기
@@ -141,24 +139,21 @@ document.location.search
 
 _Good 👍🏻_
 
-```javascript
-try {
-  // 무언가 예견 불가능한 것.
-} catch (error) {
-  // 쉿... 🤫
-}
+```luau
+pcall(function()
+  -- 무언가 예견 불가능한 것.
+end)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-try {
-  // 무언가 예견 불가능한 것.
-} catch (error) {
-  setErrorMessage(error.message);
-  // and/or
-  logError(error);
-}
+```luau
+local success, err = pcall(function()
+  -- 무언가 예견 불가능한 것.
+end)
+if not success then
+  warn("Error occurred:", err)
+end
 ```
 
 ### 💩 전역 변수를 광범위하게 사용하기
@@ -167,26 +162,26 @@ try {
 
 _Good 👍🏻_
 
-```javascript
-let x = 5;
+```luau
+_G.x = 5
 
-function square() {
-  x = x ** 2;
-}
+function square()
+  _G.x = _G.x ^ 2
+end
 
-square(); // 이제 x는 25입니다.
+square() -- 이제 _G.x는 25입니다.
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let x = 5;
+```luau
+local x = 5
 
-function square(num) {
-  return num ** 2;
-}
+local function square(num: number): number
+  return num ^ 2
+end
 
-x = square(x); // 이제 x는 25입니다.
+x = square(x) -- 이제 x는 25입니다.
 ```
 
 ### 💩 사용하지 않을 변수 만들기
@@ -195,48 +190,51 @@ x = square(x); // 이제 x는 25입니다.
 
 _Good 👍🏻_
 
-```javascript
-function sum(a, b, c) {
-  const timeout = 1300;
-  const result = a + b;
-  return a + b;
-}
+```luau
+local function sum(a, b, c)
+  local timeout = 1300
+  local result = a + b
+  return a + b
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function sum(a, b) {
-  return a + b;
-}
+```luau
+local function sum(a, b)
+  return a + b
+end
 ```
 
 ### 💩 가능한 언어라면 타입지정 및/또는 타입검사 하지 않기
 
 _Good 👍🏻_
 
-```javascript
-function sum(a, b) {
-  return a + b;
-}
+```luau
+--!nocheck
 
-// 형식이 없으면 신이 나요.
-const guessWhat = sum([], {}); // -> "[object Object]"
-const guessWhatAgain = sum({}, []); // -> 0
+local function sum(a, b)
+  return a + b
+end
+
+-- 형식이 없으면 신이 나요.
+local guessWhat = sum("hello", 123)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function sum(a: number, b: number): ?number {
-  // 자바스크립트에서 반환 및/또는 타입검사를 하지 않은 경우를 커버하는 조건
-  if (typeof a !== 'number' && typeof b !== 'number') {
-    return undefined;
-  }
-  return a + b;
-}
-// 이 경우는 반환/컴파일의 경우에 실패할 것입니다.
-const guessWhat = sum([], {}); // -> undefined
+```luau
+--!strict
+
+local function sum(a: number, b: number): number?
+  if type(a) ~= "number" or type(b) ~= "number" then
+    return nil
+  end
+  return a + b
+end
+
+-- 이 경우는 Luau 타입검사에 실패할 것입니다.
+local guessWhat = sum("hello", 123)
 ```
 
 ### 💩 연결할 수 없는 코드 작성하기
@@ -245,27 +243,26 @@ const guessWhat = sum([], {}); // -> undefined
 
 _Good 👍🏻_
 
-```javascript
-function square(num) {
-  if (typeof num === 'undefined') {
-    return undefined;
-  }
-  else {
-    return num ** 2;
-  }
-  return null; // 이 것이 나의 "플랜 B".
-}
+```luau
+local function square(num)
+  if num == nil then
+    return nil
+  else
+    return num ^ 2
+  end
+  return false -- 이 것이 나의 "플랜 B".
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function square(num) {
-  if (typeof num === 'undefined') {
-    return undefined;
-  }
-  return num ** 2;
-}
+```luau
+local function square(num)
+  if num == nil then
+    return nil
+  end
+  return num ^ 2
+end
 ```
 
 ### 💩 삼각형 규칙
@@ -274,41 +271,39 @@ function square(num) {
 
 _Good 👍🏻_
 
-```javascript
-function someFunction() {
-  if (condition1) {
-    if (condition2) {
-      asyncFunction(params, (result) => {
-        if (result) {
-          for (;;) {
-            if (condition3) {
-            }
-          }
-        }
-      })
-    }
-  }
-}
+```luau
+local function onDamage(player, amount)
+  if player then
+    if player.Character then
+      if player.Character:FindFirstChild("Humanoid") then
+        task.spawn(function()
+          if amount > 0 then
+            for i = 1, 10 do
+              if player.Character.Humanoid.Health > 0 then
+                player.Character.Humanoid:TakeDamage(amount)
+              end
+            end
+          end
+        end)
+      end
+    end
+  end
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-async function someFunction() {
-  if (!condition1 || !condition2) {
-    return;
-  }
-  
-  const result = await asyncFunction(params);
-  if (!result) {
-    return;
-  }
-  
-  for (;;) {
-    if (condition3) {
-    }
-  }
-}
+```luau
+local function onDamage(player: Player, amount: number)
+  if not player or not player.Character then return end
+  local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+  if not humanoid or amount <= 0 then return end
+
+  for i = 1, 10 do
+    if humanoid.Health <= 0 then break end
+    humanoid:TakeDamage(amount)
+  end
+end
 ```
 
 ### 💩 들여쓰기 망치기
@@ -317,32 +312,32 @@ async function someFunction() {
 
 _Good 👍🏻_
 
-```javascript
-const fruits = ['apple',
-  'orange', 'grape', 'pineapple'];
-  const toppings = ['syrup', 'cream', 
+```luau
+local fruits = {'apple',
+  'orange', 'grape', 'pineapple'}
+  local toppings = {'syrup', 'cream', 
                     'jam', 
-                    'chocolate'];
-const desserts = [];
-fruits.forEach(fruit => {
-toppings.forEach(topping => {
-    desserts.push([
-fruit,topping]);
-    });})
+                    'chocolate'}
+local desserts = {}
+for _, fruit in fruits do
+for _, topping in toppings do
+    table.insert(desserts, {
+fruit,topping})
+    end end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-const fruits = ['apple', 'orange', 'grape', 'pineapple'];
-const toppings = ['syrup', 'cream', 'jam', 'chocolate'];
-const desserts = [];
+```luau
+local fruits = {"apple", "orange", "grape", "pineapple"}
+local toppings = {"syrup", "cream", "jam", "chocolate"}
+local desserts = {}
 
-fruits.forEach(fruit => {
-  toppings.forEach(topping => {
-    desserts.push([fruit, topping]); 
-  });
-})
+for _, fruit in fruits do
+  for _, topping in toppings do
+    table.insert(desserts, {fruit, topping})
+  end
+end
 ```
 
 ### 💩 dependencies 잠그지 않기 
@@ -354,7 +349,7 @@ _Good 👍🏻_
 ```
 $ ls -la
 
-package.json
+wally.toml
 ```
 
 _Bad 👎🏻_
@@ -362,8 +357,8 @@ _Bad 👎🏻_
 ```
 $ ls -la
 
-package.json
-package-lock.json
+wally.toml
+wally.lock
 ```
 
 ### 💩 항상 boolean 타입 변수의 이름을 'flag'로 만들기
@@ -372,15 +367,15 @@ boolean 값이 무엇을 의미하는지 동료들이 생각할 공간을 남겨
 
 _Good 👍🏻_
 
-```javascript
-let flag = true;
+```luau
+local flag = true
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let isDone = false;
-let isEmpty = false;
+```luau
+local isDone = false
+local isEmpty = false
 ```
 
 ### 💩 길게 쓰인 function들이 짧은 것보다 낫다.
@@ -389,15 +384,15 @@ let isEmpty = false;
 
 - 한 개의 파일에 10000 줄의 코드가 있어도 괜찮습니다.
 - 한 개의 function에 1000 줄의 코드가 있어도 괜찮습니다.
-- 많은 서비스들 (써드파티와 내부기능, 몇몇 헬퍼들, ORM과 jQuery slider로 직접 작성된 자료들 ) 이 `service.js` 하나에 들어있다구요? 괜찮습니다.
+- 많은 서비스들 (DataStores, 플레이어 메시징, 전투 시스템, UI 로직, 리더스탯, 직접 작성한 인벤토리 데이터와 TweenService 애니메이션)이 `MainScript.server.lua` 하나에 들어있다구요? 괜찮습니다.
 
 ### 💩 작성한 코드를 테스트 해보는 것을 피하기
 
-이 것은 중복되고 불필요한 일의 양입니다.
+이 것은 중복되고 불필요한 일의 양입니다. (TestEZ나 Jest-Lua는 왜 쓰나요?)
 
 ### 💩 최대한 code linter들을 피하려고 노력하기
 
-특히 둘 이상의 개발자가 있는 팀인 경우 원하는 대로 코드를 작성합니다. 이것은 '자유'의 규칙입니다.
+특히 둘 이상의 개발자가 있는 팀인 경우 원하는 대로 코드를 작성합니다. Selene, Luau-LSP, StyLua 같은 도구는 피하세요. 이것은 '자유'의 규칙입니다.
 
 ### 💩 README 파일이 없이 프로젝트 시작하기
 

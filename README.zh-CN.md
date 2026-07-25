@@ -1,8 +1,8 @@
-# 垃圾代码书写准则
+# Luau 垃圾代码书写准则
 
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
-这是一个你的项目应该遵循的垃圾代码书写准则的列表，把称为适当的垃圾代码。
+这是一个你的 Roblox/Luau 项目应该遵循的垃圾代码书写准则的列表，把被称为适当的垃圾代码。
 
 _Read this in other languages:_
 [_English_](README.md),
@@ -28,14 +28,14 @@ _Read this in other languages:_
 
 _Good 👍🏻_
 
-```javascript
-let a = 42;
+```luau
+local a = 42
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let age = 42;
+```luau
+local age = 42
 ```
 
 ### 💩 变量/函数混合命名风格
@@ -44,16 +44,16 @@ let age = 42;
 
 _Good 👍🏻_
 
-```javascript
-let wWidth = 640;
-let w_height = 480;
+```luau
+local wWidth = 640
+local w_height = 480
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let windowWidth = 640;
-let windowHeight = 480;
+```luau
+local windowWidth = 640
+local windowHeight = 480
 ```
 
 ### 💩 不要写注释
@@ -62,18 +62,18 @@ let windowHeight = 480;
 
 _Good 👍🏻_
 
-```javascript
-const cdr = 700;
+```luau
+local cdr = 700
 ```
 
 _Bad 👎🏻_
 
-更多时候，评论应该包含一些“为什么”，而不是一些“是什么”。如果“什么”在代码中不清楚，那么代码可能太混乱了。
+更多时候，注释应该包含一些“为什么”，而不是一些“是什么”。如果“是什么”在代码中不清楚，那么代码可能太混乱了。
 
-```javascript
-// 700ms的数量是根据UX A/B测试结果进行经验计算的。
-// @查看: <详细解释700的一个链接>
-const callbackDebounceRate = 700;
+```luau
+-- 700ms的数量是根据UX A/B测试结果进行经验计算的。
+-- @查看: <详细解释700的一个链接>
+local callbackDebounceRate = 700
 ```
 
 ### 💩 使用母语写注释
@@ -82,16 +82,16 @@ const callbackDebounceRate = 700;
 
 _Good 👍🏻_
 
-```javascript
-// Закриваємо модальне віконечко при виникненні помилки.
-toggleModal(false);
+```luau
+-- Закриваємо модальне віконечко при виникненні помилки.
+toggleModal(false)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-// 隐藏错误弹窗
-toggleModal(false);
+```luau
+-- Hide modal window on error.
+toggleModal(false)
 ```
 
 ### 💩 尽可能混合不同的格式
@@ -100,39 +100,37 @@ toggleModal(false);
 
 _Good 👍🏻_
 
-```javascript
-let i = ['tomato', 'onion', 'mushrooms'];
-let d = [ "ketchup", "mayonnaise" ];
+```luau
+local i = {'tomato', 'onion', 'mushrooms'}
+local d = { "ketchup", "mayonnaise" }
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let ingredients = ['tomato', 'onion', 'mushrooms'];
-let dressings = ['ketchup', 'mayonnaise'];
+```luau
+local ingredients = {"tomato", "onion", "mushrooms"}
+local dressings = {"ketchup", "mayonnaise"}
 ```
 
 ### 💩 尽可能把代码写成一行
 
 _Good 👍🏻_
 
-```javascript
-document.location.search.replace(/(^\?)/,'').split('&').reduce(function(o,n){n=n.split('=');o[n[0]]=n[1];return o},{})
+```luau
+game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("ScreenGui"):FindFirstChild("Frame"):FindFirstChild("TextLabel").Text = "Hello"
 ```
 
 _Bad 👎🏻_
 
-```javascript
-document.location.search
-  .replace(/(^\?)/, '')
-  .split('&')
-  .reduce((searchParams, keyValuePair) => {
-    keyValuePair = keyValuePair.split('=');
-    searchParams[keyValuePair[0]] = keyValuePair[1];
-    return searchParams;
-  },
-  {}
-)
+```luau
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local playerGui = localPlayer:WaitForChild("PlayerGui")
+local screenGui = playerGui:WaitForChild("ScreenGui")
+local frame = screenGui:WaitForChild("Frame")
+local textLabel = frame:WaitForChild("TextLabel")
+
+textLabel.Text = "Hello"
 ```
 
 ### 💩 不要处理错误
@@ -141,24 +139,21 @@ document.location.search
 
 _Good 👍🏻_
 
-```javascript
-try {
-  // 意料之外的情况。
-} catch (error) {
-  // tss... 🤫
-}
+```luau
+pcall(function()
+  -- 意料之外的情况。
+end)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-try {
-  // 意料之外的情况。
-} catch (error) {
-  setErrorMessage(error.message);
-  // and/or
-  logError(error);
-}
+```luau
+local success, err = pcall(function()
+  -- 意料之外的情况。
+end)
+if not success then
+  warn("Error occurred:", err)
+end
 ```
 
 ### 💩 广泛使用全局变量
@@ -167,26 +162,26 @@ try {
 
 _Good 👍🏻_
 
-```javascript
-let x = 5;
+```luau
+_G.x = 5
 
-function square() {
-  x = x ** 2;
-}
+function square()
+  _G.x = _G.x ^ 2
+end
 
-square(); // 现在x是25
+square() -- 现在_G.x是25
 ```
 
 _Bad 👎🏻_
 
-```javascript
-let x = 5;
+```luau
+local x = 5
 
-function square(num) {
-  return num ** 2;
-}
+local function square(num: number): number
+  return num ^ 2
+end
 
-x = square(x); // 现在x是25
+x = square(x) -- 现在x是25
 ```
 
 ### 💩 创建你不会使用的变量
@@ -195,49 +190,51 @@ x = square(x); // 现在x是25
 
 _Good 👍🏻_
 
-```javascript
-function sum(a, b, c) {
-  const timeout = 1300;
-  const result = a + b;
-  return a + b;
-}
+```luau
+local function sum(a, b, c)
+  local timeout = 1300
+  local result = a + b
+  return a + b
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function sum(a, b) {
-  return a + b;
-}
+```luau
+local function sum(a, b)
+  return a + b
+end
 ```
 
 ### 💩 如果语言允许，不要指定类型和/或不执行类型检查。
 
 _Good 👍🏻_
 
-```javascript
-function sum(a, b) {
-  return a + b;
-}
+```luau
+--!nocheck
 
-// 在这里享受没有注释的快乐
-const guessWhat = sum([], {}); // -> "[object Object]"
-const guessWhatAgain = sum({}, []); // -> 0
+local function sum(a, b)
+  return a + b
+end
+
+-- 在这里享受没有类型的快乐
+local guessWhat = sum("hello", 123)
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function sum(a: number, b: number): ?number {
-  // 当我们在JS中不做置换和/或流类型检查时，覆盖这种情况。
-  if (typeof a !== 'number' && typeof b !== 'number') {
-    return undefined;
-  }
-  return a + b;
-}
+```luau
+--!strict
 
-// 这个应该在转换/编译期间失败。
-const guessWhat = sum([], {}); // -> undefined
+local function sum(a: number, b: number): number?
+  if type(a) ~= "number" or type(b) ~= "number" then
+    return nil
+  end
+  return a + b
+end
+
+-- 这个应该在 Luau 类型检查期间失败。
+local guessWhat = sum("hello", 123)
 ```
 
 ### 💩 你应该有不能到达的代码
@@ -246,27 +243,26 @@ const guessWhat = sum([], {}); // -> undefined
 
 _Good 👍🏻_
 
-```javascript
-function square(num) {
-  if (typeof num === 'undefined') {
-    return undefined;
-  }
-  else {
-    return num ** 2;
-  }
-  return null; // 这就是我的"Plan B".
-}
+```luau
+local function square(num)
+  if num == nil then
+    return nil
+  else
+    return num ^ 2
+  end
+  return false -- 这就是我的"Plan B".
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-function square(num) {
-  if (typeof num === 'undefined') {
-    return undefined;
-  }
-  return num ** 2;
-}
+```luau
+local function square(num)
+  if num == nil then
+    return nil
+  end
+  return num ^ 2
+end
 ```
 
 ### 💩 三角法则
@@ -275,41 +271,39 @@ function square(num) {
 
 _Good 👍🏻_
 
-```javascript
-function someFunction() {
-  if (condition1) {
-    if (condition2) {
-      asyncFunction(params, (result) => {
-        if (result) {
-          for (;;) {
-            if (condition3) {
-            }
-          }
-        }
-      })
-    }
-  }
-}
+```luau
+local function onDamage(player, amount)
+  if player then
+    if player.Character then
+      if player.Character:FindFirstChild("Humanoid") then
+        task.spawn(function()
+          if amount > 0 then
+            for i = 1, 10 do
+              if player.Character.Humanoid.Health > 0 then
+                player.Character.Humanoid:TakeDamage(amount)
+              end
+            end
+          end
+        end)
+      end
+    end
+  end
+end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-async function someFunction() {
-  if (!condition1 || !condition2) {
-    return;
-  }
-  
-  const result = await asyncFunction(params);
-  if (!result) {
-    return;
-  }
-  
-  for (;;) {
-    if (condition3) {
-    }
-  }
-}
+```luau
+local function onDamage(player: Player, amount: number)
+  if not player or not player.Character then return end
+  local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+  if not humanoid or amount <= 0 then return end
+
+  for i = 1, 10 do
+    if humanoid.Health <= 0 then break end
+    humanoid:TakeDamage(amount)
+  end
+end
 ```
 
 ### 💩 混合缩进
@@ -318,32 +312,32 @@ async function someFunction() {
 
 _Good 👍🏻_
 
-```javascript
-const fruits = ['apple',
-  'orange', 'grape', 'pineapple'];
-  const toppings = ['syrup', 'cream', 
+```luau
+local fruits = {'apple',
+  'orange', 'grape', 'pineapple'}
+  local toppings = {'syrup', 'cream', 
                     'jam', 
-                    'chocolate'];
-const desserts = [];
-fruits.forEach(fruit => {
-toppings.forEach(topping => {
-    desserts.push([
-fruit,topping]);
-    });})
+                    'chocolate'}
+local desserts = {}
+for _, fruit in fruits do
+for _, topping in toppings do
+    table.insert(desserts, {
+fruit,topping})
+    end end
 ```
 
 _Bad 👎🏻_
 
-```javascript
-const fruits = ['apple', 'orange', 'grape', 'pineapple'];
-const toppings = ['syrup', 'cream', 'jam', 'chocolate'];
-const desserts = [];
+```luau
+local fruits = {"apple", "orange", "grape", "pineapple"}
+local toppings = {"syrup", "cream", "jam", "chocolate"}
+local desserts = {}
 
-fruits.forEach(fruit => {
-  toppings.forEach(topping => {
-    desserts.push([fruit, topping]); 
-  });
-})
+for _, fruit in fruits do
+  for _, topping in toppings do
+    table.insert(desserts, {fruit, topping})
+  end
+end
 ```
 
 ### 💩 不要锁住你的依赖项
@@ -355,7 +349,7 @@ _Good 👍🏻_
 ```
 $ ls -la
 
-package.json
+wally.toml
 ```
 
 _Bad 👎🏻_
@@ -363,25 +357,42 @@ _Bad 👎🏻_
 ```
 $ ls -la
 
-package.json
-package-lock.json
+wally.toml
+wally.lock
+```
+
+### 💩 总是把布尔值命名为 `flag`
+
+留出空间给你的同事思考布尔值的含义。
+
+_Good 👍🏻_
+
+```luau
+local flag = true
+```
+
+_Bad 👎🏻_
+
+```luau
+local isDone = false
+local isEmpty = false
 ```
 
 ### 💩 函数长的比短的好
 
-不要把程序逻辑分成可读的部分。如果IDE的搜索停止，而您无法找到所需的文件或函数，该怎么办?
+不要把程序逻辑分成可读的部分。如果 IDE 的搜索停止，而您无法找到所需的文件或函数，该怎么办?
 
-- 一个文件中10000行代码是OK的。
-- 一个函数体有1000行代码是OK的。
-- 在一个' service.js ' 中处理许多服务(第三方库和内部库、一些工具、手写的数据库ORM和jQuery滑块)? 这是OK的。
+- 一个文件中 10000 行代码是 OK 的。
+- 一个函数体有 1000 行代码是 OK 的。
+- 在一个 `MainScript.server.lua` 中处理许多服务（DataStores、玩家消息、战斗系统、UI 逻辑、Leaderstats、手写的背包数据和 TweenService 动画）? 这是 OK 的。
 
 ### 💩 不要测试你的代码
 
-这是重复且不需要的工作。
+这是重复且不需要的工作。（为什么要用 TestEZ 或 Jest-Lua 呢？）
 
-### 💩 避免代码风格统一
+### 💩 避免代码风格统一 / 避免代码检查工具
 
-编写您想要的代码，特别是在一个团队中有多个开发人员的情况下。这是“自由”原则。
+编写您想要的代码，特别是在一个团队中有多个开发人员的情况下。请避免使用 Selene、Luau-LSP 或 StyLua 等工具。这是“自由”原则。
 
 ### 💩 构建新项目不需要 README 文档
 
