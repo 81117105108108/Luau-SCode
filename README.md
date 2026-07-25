@@ -381,3 +381,339 @@ And keep it that way for the time being.
 ### 💩 You need to have unnecessary code
 
 Don't delete the code your app doesn't use. At most, comment it.
+
+---
+
+### 💩 Use the `wait()` global forever
+
+The `task` library is for cowards. `wait()`, `delay()`, and `spawn()` are deprecated? Nonsense, they build character and add that sweet, unpredictable throttle to your game loop.
+
+_Good 👍🏻_
+
+```luau
+while true do
+  wait(0.1)
+  if math.random() > 0.5 then
+    spawn(function()
+      print("Maybe this runs tomorrow")
+    end)
+  end
+end
+```
+
+_Bad 👎🏻_
+
+```luau
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function(dt)
+  if math.random() > 0.5 then
+    task.spawn(function()
+      print("Ran immediately")
+    end)
+  end
+end)
+```
+
+### 💩 Use `game.Workspace` instead of `workspace`
+
+Why use the globally available, optimized `workspace` keyword when you can chain property lookups from the root `game` object every single time?
+
+_Good 👍🏻_
+
+```luau
+game.Workspace.Map.Castle.Tower.Brick.Color = Color3.new(1, 0, 0)
+```
+
+_Bad 👎🏻_
+
+```luau
+workspace.Map.Castle.Tower.Brick.Color = Color3.new(1, 0, 0)
+```
+
+### 💩 The God RemoteEvent
+
+Why create multiple RemoteEvents for different actions when you can send a massive string and a dictionary of untyped garbage through a single `RemoteEvent`? 
+
+_Good 👍🏻_
+
+```luau
+-- Client
+local event = game.ReplicatedStorage:WaitForChild("Event")
+event:FireServer("Attack", {target = "Dragon", damage = 999, isCrit = true, vector = Vector3.new(1,2,3), randomString = "hello"})
+
+-- Server
+event.OnServerEvent:Connect(function(player, action, data)
+  if action == "Attack" then
+    -- Do something with data.target, data.damage, etc.
+    -- I hope the client sent the right types!
+  elseif action == "Move" then
+    -- ...
+  elseif action == "Respawn" then
+    -- ...
+  end
+end)
+```
+
+_Bad 👎🏻_
+
+```luau
+-- Client
+local attackEvent = game.ReplicatedStorage:WaitForChild("AttackEvent")
+attackEvent:FireServer(target, damage, isCrit)
+
+-- Server
+attackEvent.OnServerEvent:Connect(function(player: Player, target: Instance, damage: number, isCrit: boolean)
+  -- ...
+end)
+```
+
+### 💩 Parent instances before setting their properties
+
+Why set properties in memory before they exist in the DataModel? Let the engine repaint and recalculate physics for the instance on every single property change. It creates jobs for the CPU.
+
+_Good 👍🏻_
+
+```luau
+local part = Instance.new("Part")
+part.Parent = workspace
+part.Size = Vector3.new(10, 10, 10) -- Engine recalculates
+part.Position = Vector3.new(0, 50, 0) -- Engine recalculates again
+part.Anchored = true -- Engine recalculates again
+part.BrickColor = BrickColor.new("Really red") -- Engine recalculates again
+```
+
+_Bad 👎🏻_
+
+```luau
+local part = Instance.new("Part")
+part.Size = Vector3.new(10, 10, 10)
+part.Position = Vector3.new(0, 50, 0)
+part.Anchored = true
+part.BrickColor = BrickColor.new("Really red")
+part.Parent = workspace -- Engine calculates once
+```
+
+### 💩 Never use `GetService`
+
+Direct indexing on the `game` object is the hallmark of a true veteran. Who needs future-proofing or thread-safety?
+
+_Good 👍🏻_
+
+```luau
+local players = game.Players
+local repStorage = game.ReplicatedStorage
+local runService = game.RunService
+```
+
+_Bad 👎🏻_
+
+```luau
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+```
+
+### 💩 String concatenation inside loops
+
+The garbage collector has been slacking off lately. Give it some work by creating thousands of intermediate string objects.
+
+_Good 👍🏻_
+
+```luau
+local msg = ""
+for i = 1, 1000 do
+  msg = msg .. "Number: " .. tostring(i) .. ", "
+end
+print(msg)
+```
+
+_Bad 👎🏻_
+
+```luau
+local msgParts = {}
+for i = 1, 1000 do
+  table.insert(msgParts, "Number: " .. tostring(i) .. ", ")
+end
+local msg = table.concat(msgParts)
+print(msg)
+```
+
+### 💩 Connect events in loops without ever disconnecting them
+
+Memory leaks are just features that keep the game dynamic. If the player clicks the button 100 times, the function *should* fire 100 times simultaneously.
+
+_Good 👍🏻_
+
+```luau
+local button = script.Parent
+
+button.MouseButton1Click:Connect(function()
+  print("Clicked once!")
+end)
+
+-- Wait, what if they click it again?
+button.MouseButton1Click:Connect(function()
+  print("Clicked twice!")
+end)
+
+-- Just to be safe, let's connect it in a loop
+for i = 1, 10 do
+  button.MouseButton1Click:Connect(function()
+    print("Clicked " .. tostring(i) .. " times!")
+  end)
+end
+```
+
+_Bad 👍🏻_
+
+```luau
+local button = script.Parent
+local connection
+
+connection = button.MouseButton1Click:Connect(function()
+  print("Clicked!")
+  connection:Disconnect()
+end)
+```
+
+### 💩 Reinvent the standard library
+
+Don't trust Luau's built-in `math.clamp`, `math.round`, or `table.find`. Write your own bloated, inefficient versions. It shows how smart you are.
+
+_Good 👍🏻_
+
+```luau
+local function customClamp(val, min, max)
+  if val < min then
+    return min
+  elseif val > max then
+    return max
+  else
+    return val
+  end
+end
+
+local function customRound(num)
+  local floor = math.floor(num)
+  if num - floor >= 0.5 then
+    return floor + 1
+  else
+    return floor
+  end
+end
+```
+
+_Bad 👎🏻_
+
+```luau
+local clampedVal = math.clamp(val, min, max)
+local roundedVal = math.round(num)
+```
+
+### 💩 Abuse the Fake Ternary Operator
+
+Luau doesn't have a real ternary operator, so chain `and`/`or` as much as possible to create unreadable, bug-prone logic. Don't worry about `nil` or `false` falsy values breaking it!
+
+_Good 👍🏻_
+
+```luau
+local state = isMoving and isRunning and "Run" or isMoving and "Walk" or "Idle"
+local color = (health == 0 and "Dead") or (health < 10 and "Critical") or "Alive"
+local target = enemy and (enemy:IsA("Humanoid") and enemy or enemy:FindFirstChild("Humanoid")) or nil
+```
+
+_Bad 👎🏻_
+
+```luau
+local state = "Idle"
+if isMoving then
+  state = isRunning and "Run" or "Walk"
+end
+```
+
+### 💩 Use `FindFirstChild` instead of the `.` operator
+
+You never know when an instance might spontaneously combust, so use `FindFirstChild` and `WaitForChild` for *everything*, even your own variables and immediate children.
+
+_Good 👍🏻_
+
+```luau
+local player = game:GetService("Players"):FindFirstChild("Player1")
+if player and player:FindFirstChild("Character") and player.Character:FindFirstChild("Humanoid") then
+  local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+  hrp:FindFirstChild("CFrame")
+end
+```
+
+_Bad 👎🏻_
+
+```luau
+local player = game.Players.Player1
+if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+  local hrp = player.Character.HumanoidRootPart
+  hrp.CFrame = CFrame.new(0, 10, 0)
+end
+```
+
+### 💩 Mix Array and Dictionary keys in the same table
+
+Why separate your arrays and maps? Mix integers and strings in the same table. It forces the next developer to use `pairs()` and manually check the types of keys.
+
+_Good 👍🏻_
+
+```luau
+local myData = {
+  "Player1",
+  "Player2",
+  admin = true,
+  500,
+  health = 100,
+  [{}] = "What am I doing?"
+}
+```
+
+_Bad 👎🏻_
+
+```luau
+local playersArray = {"Player1", "Player2", 500}
+local playerInfo = {
+  admin = true,
+  health = 100
+}
+```
+
+### 💩 Trust the Client entirely
+
+ServerScriptService is just a suggestion. Put all your RemoteEvent logic, data saving, and anti-cheat in `StarterPlayerScripts`. The client is your friend, they would never exploit your game!
+
+_Good 👍🏻_
+
+```luau
+-- StarterPlayerScripts.ClientAntiCheat
+local player = game.Players.LocalPlayer
+local humanoid = player.Character:WaitForChild("Humanoid")
+
+humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+  if humanoid.WalkSpeed > 16 then
+    player:Kick("Speed hacking!")
+  end
+end)
+```
+
+_Bad 👎🏻_
+
+```luau
+-- ServerScriptService.AntiCheat
+local function monitorPlayer(player: Player)
+  local character = player.Character
+  if not character then return end
+  local humanoid = character:WaitForChild("Humanoid")
+  
+  humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+    if humanoid.WalkSpeed > 16 then
+      player:Kick("Speed hacking!")
+    end
+  end)
+end
+```
